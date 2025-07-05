@@ -20,6 +20,14 @@ func (r *ReservationRepo) Create(ctx context.Context, reservation *entities.Rese
 	return r.DB.WithContext(ctx).Create(reservation).Error
 }
 
+func (r *ReservationRepo) GetByID(ctx context.Context, reservationID uint) (*entities.Reservation, error) {
+	panic("unimplemented")
+}
+
+func (r *ReservationRepo) GetAll(ctx context.Context) ([]*entities.Reservation, error) {
+	panic("unimplemented")
+}
+
 func (r *ReservationRepo) Update(ctx context.Context, reservation *entities.Reservation, reservationID uint) error {
 	reservation.ID = reservationID
 	return r.DB.WithContext(ctx).Save(reservation).Error
