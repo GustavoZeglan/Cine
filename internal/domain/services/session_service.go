@@ -23,17 +23,17 @@ func NewSessionService(sessionRepo repositories.SessionRepository) SessionServic
 }
 
 func (s *SessionServiceImpl) CreateSession(ctx context.Context, session *entities.Session) error {
-	panic("unimplemented")
+	return s.SessionRepo.Create(ctx, session)
 }
 
 func (s *SessionServiceImpl) GetAllSessions(ctx context.Context) ([]*entities.Session, error) {
-	panic("unimplemented")
+	return s.SessionRepo.GetAll(ctx)
 }
 
 func (s *SessionServiceImpl) GetSessionByID(ctx context.Context, sessionID uint) (*entities.Session, error) {
-	panic("unimplemented")
+	return s.SessionRepo.GetByID(ctx, sessionID)
 }
 
 func (s *SessionServiceImpl) UpdateSession(ctx context.Context, session *entities.Session, sessionID uint) error {
-	panic("unimplemented")
+	return s.SessionRepo.Update(ctx, session, sessionID)
 }

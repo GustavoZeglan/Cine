@@ -24,21 +24,21 @@ func NewRoomService(roomRepo repositories.RoomRepository) RoomService {
 }
 
 func (r *RoomServiceImpl) CreateRoom(ctx context.Context, room *entities.Room) error {
-	panic("unimplemented")
-}
-
-func (r *RoomServiceImpl) DeleteRoom(ctx context.Context, roomID uint) error {
-	panic("unimplemented")
+	return r.RoomRepo.Create(ctx, room)
 }
 
 func (r *RoomServiceImpl) GetAllRooms(ctx context.Context) ([]*entities.Room, error) {
-	panic("unimplemented")
+	return r.RoomRepo.GetAll(ctx)
 }
 
 func (r *RoomServiceImpl) GetRoomByID(ctx context.Context, roomID uint) (*entities.Room, error) {
-	panic("unimplemented")
+	return r.RoomRepo.GetByID(ctx, roomID)
 }
 
 func (r *RoomServiceImpl) UpdateRoom(ctx context.Context, room *entities.Room, roomID uint) error {
-	panic("unimplemented")
+	return r.RoomRepo.Update(ctx, room, roomID)
+}
+
+func (r *RoomServiceImpl) DeleteRoom(ctx context.Context, roomID uint) error {
+	return r.RoomRepo.Delete(ctx, roomID)
 }

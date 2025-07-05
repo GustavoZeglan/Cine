@@ -22,13 +22,13 @@ func NewSeatService(seatRepo repositories.SeatRepository) SeatService {
 }
 
 func (s *SeatServiceImpl) CreateSeat(ctx context.Context, seat *entities.Seat) error {
-	panic("unimplemented")
+	return s.SeatRepo.Create(ctx, seat)
 }
 
 func (s *SeatServiceImpl) GetSeatByID(ctx context.Context, seatID uint) (*entities.Seat, error) {
-	panic("unimplemented")
+	return s.SeatRepo.GetByID(ctx, seatID)
 }
 
 func (s *SeatServiceImpl) UpdateSeat(ctx context.Context, seat *entities.Seat, seatID uint) error {
-	panic("unimplemented")
+	return s.SeatRepo.Update(ctx, seat, seatID)
 }

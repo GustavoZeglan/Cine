@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/GustavoZeglan/Cine/internal/domain/services"
 	psql "github.com/GustavoZeglan/Cine/internal/infra/db/postgres"
 	"github.com/joho/godotenv"
 )
@@ -28,10 +29,17 @@ func main() {
 	// ctx := context.Background()
 
 	// Repositories
-	_ = psql.NewMovieRepository(DB)
-	_ = psql.NewRoomRepository(DB)
-	_ = psql.NewSeatRepository(DB)
-	_ = psql.NewSessionRepository(DB)
-	_ = psql.NewReservationRepository(DB)
+	movieRepository := psql.NewMovieRepository(DB)
+	roomRepository := psql.NewRoomRepository(DB)
+	seatRepository := psql.NewSeatRepository(DB)
+	sessionRepository := psql.NewSessionRepository(DB)
+	reservationRepository := psql.NewReservationRepository(DB)
+
+	// Services
+	_ = services.NewMovieService(movieRepository)
+	_ = services.NewRoomService(roomRepository)
+	_ = services.NewSeatService(seatRepository)
+	_ = services.NewSessionService(sessionRepository)
+	_ = services.NewReservationService(reservationRepository)
 
 }
