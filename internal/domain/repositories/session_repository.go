@@ -7,6 +7,8 @@ import (
 )
 
 type SessionRepository interface {
-	Create(ctx context.Context, session *entities.Movie) error
-	Update(ctx context.Context, session *entities.Movie, sessionID uint) error
+	Create(ctx context.Context, session *entities.Session) error
+	GetByID(ctx context.Context, sessionID uint) (*entities.Session, error)
+	GetAll(ctx context.Context) ([]*entities.Session, error)
+	Update(ctx context.Context, session *entities.Session, sessionID uint) error
 }

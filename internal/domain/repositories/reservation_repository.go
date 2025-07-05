@@ -7,6 +7,6 @@ import (
 )
 
 type ReservationRepository interface {
-	Create(ctx context.Context, reservation *entities.Movie) error
-	Update(ctx context.Context, reservation *entities.Movie, reservationID uint) error
+	Create(ctx context.Context, reservation *entities.Reservation) error
+	Update(ctx context.Context, reservation *entities.Reservation, reservationID uint) error
 }

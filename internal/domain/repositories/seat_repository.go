@@ -7,6 +7,7 @@ import (
 )
 
 type SeatRepository interface {
-	Create(ctx context.Context, seat *entities.Movie) error
-	Update(ctx context.Context, seat *entities.Movie, seatID uint) error
+	Create(ctx context.Context, seat *entities.Seat) error
+	GetByID(ctx context.Context, seatID uint) (*entities.Seat, error)
+	Update(ctx context.Context, seat *entities.Seat, seatID uint) error
 }
