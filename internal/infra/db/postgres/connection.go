@@ -16,8 +16,8 @@ var DB *gorm.DB
 
 func Connect() *gorm.DB {
 
-	dbConn := config.GetDatabaseEnvironments()
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%v sslmode=disable TimeZone=America/Sao_Paulo", dbConn.Host, dbConn.User, dbConn.Password, dbConn.DBName, dbConn.Port)
+	dbConn := config.AppConfig.PostgresDB
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%v sslmode=disable TimeZone=America/Sao_Paulo", dbConn.Host, dbConn.User, dbConn.Password, dbConn.Name, dbConn.Port)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),

@@ -1,21 +1,38 @@
 package config
 
-import "os"
+import (
+	"fmt"
 
-type DbConn struct {
-	Host     string
-	DBName   string
-	Port     string
-	User     string
-	Password string
+	"github.com/spf13/viper"
+)
+
+type Config struct {
+	PostgresDB struct {
+		Host     string
+		Name     string
+		Port     int
+		User     string
+		Password string
+	}
 }
 
-func GetDatabaseEnvironments() DbConn {
-	return DbConn{
-		Host:     os.Getenv("POSTGRES_HOST"),
-		DBName:   os.Getenv("POSTGRES_DB"),
-		Port:     os.Getenv("POSTGRES_PORT"),
-		User:     os.Getenv("POSTGRES_USER"),
-		Password: os.Getenv("POSTGRES_PASSWORD"),
+var AppConfig *Config
+
+func LoadConfig() {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println("Error reading config file", err)
 	}
+
+	var cf Config
+	if err := viper.Unmarshal(&cf); err != nil {
+		fmt.Println("Error unmarshalling config file", err)
+	}
+
+	AppConfig = &cf
 }

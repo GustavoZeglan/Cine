@@ -3,19 +3,16 @@ package main
 import (
 	"fmt"
 
+	"github.com/GustavoZeglan/Cine/internal/config"
 	"github.com/GustavoZeglan/Cine/internal/domain/services"
 	psql "github.com/GustavoZeglan/Cine/internal/infra/db/postgres"
-	"github.com/joho/godotenv"
 )
 
 func main() {
 	fmt.Println("Say hello to my little friend!")
 	fmt.Println("The eyes Chico, the eyes never lie!")
 
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env")
-	}
+	config.LoadConfig()
 
 	DB := psql.Connect()
 	// DB.AutoMigrate(
