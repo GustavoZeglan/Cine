@@ -8,25 +8,25 @@ import (
 	"gorm.io/gorm"
 )
 
-type SeatRepo struct {
+type SeatRepositoryImpl struct {
 	DB *gorm.DB
 }
 
 func NewSeatRepository(DB *gorm.DB) repositories.SeatRepository {
-	return &SeatRepo{DB}
+	return &SeatRepositoryImpl{DB}
 }
 
-func (s *SeatRepo) Create(ctx context.Context, seat *entities.Seat) error {
+func (s *SeatRepositoryImpl) Create(ctx context.Context, seat *entities.Seat) error {
 	return s.DB.WithContext(ctx).Create(seat).Error
 }
 
-func (s *SeatRepo) GetByID(ctx context.Context, seatID uint) (*entities.Seat, error) {
+func (s *SeatRepositoryImpl) GetByID(ctx context.Context, seatID uint) (*entities.Seat, error) {
 	var seat entities.Seat
 	err := s.DB.WithContext(ctx).First(&seat, seatID).Error
 	return &seat, err
 }
 
-func (s *SeatRepo) Update(ctx context.Context, seat *entities.Seat, seatID uint) error {
+func (s *SeatRepositoryImpl) Update(ctx context.Context, seat *entities.Seat, seatID uint) error {
 	seat.ID = seatID
 	return s.DB.WithContext(ctx).Save(seat).Error
 }
