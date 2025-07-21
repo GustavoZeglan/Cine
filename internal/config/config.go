@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/spf13/viper"
 )
@@ -14,25 +15,41 @@ type Config struct {
 		User     string
 		Password string
 	}
+
+	OracleDB struct {
+		Host     string
+		Name     string
+		Port     int
+		User     string
+		Password string
+	}
 }
 
-var AppConfig *Config
+var (
+	AppConfig *Config
+	once      sync.Once
+)
 
-func LoadConfig() {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+func LoadConfig() *Config {
+	once.Do(func() {
 
-	viper.AutomaticEnv()
+		v := viper.New()
 
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("Error reading config file", err)
-	}
+		v.SetConfigName("config")
+		v.SetConfigType("yaml")
+		v.AddConfigPath(".")
 
-	var cf Config
-	if err := viper.Unmarshal(&cf); err != nil {
-		fmt.Println("Error unmarshalling config file", err)
-	}
+		v.AutomaticEnv()
 
-	AppConfig = &cf
+		if err := v.ReadInConfig(); err != nil {
+			fmt.Println("Error reading config file", err)
+		}
+
+		if err := v.Unmarshal(&AppConfig); err != nil {
+			fmt.Println("Error unmarshalling config file", err)
+		}
+
+	})
+
+	return AppConfig
 }

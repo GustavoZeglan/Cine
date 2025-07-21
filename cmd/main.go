@@ -12,13 +12,27 @@ import (
 )
 
 func main() {
-	fmt.Println("Say hello to my little friend!")
-	fmt.Println("The eyes Chico, the eyes never lie!")
 
 	config.LoadConfig()
+	oracle.Connect()
 
-	DB := psql.Connect()
-	// DB.AutoMigrate(
+	// sql, _ := db.DB()
+	// driver := sql.Driver()
+
+	// m, _ := migrate.NewWithDatabaseInstance(
+	// 	"file://internal/infra/db/migrations",
+	// 	"godror", &database.Driver,
+	// )
+
+	// fmt.Println(m)
+
+	// if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+	// 	log.Fatal(err)
+	// }
+
+	// log.Println("Migrations ran successfully.")
+
+	// db.AutoMigrate(
 	// 	&entities.Movie{},
 	// 	&entities.Room{},
 	// 	&entities.Seat{},
@@ -29,11 +43,11 @@ func main() {
 	// ctx := context.Background()
 
 	// Repositories
-	movieRepository := psql.NewMovieRepository(DB)
-	roomRepository := psql.NewRoomRepository(DB)
-	seatRepository := psql.NewSeatRepository(DB)
-	sessionRepository := psql.NewSessionRepository(DB)
-	reservationRepository := psql.NewReservationRepository(DB)
+	movieRepository := oracle.NewMovieRepository()
+	roomRepository := oracle.NewRoomRepository()
+	seatRepository := oracle.NewSeatRepository()
+	sessionRepository := oracle.NewSessionRepository()
+	reservationRepository := oracle.NewReservationRepository()
 
 	// Services
 	movieService := services.NewMovieService(movieRepository)
