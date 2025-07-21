@@ -6,7 +6,8 @@ import (
 	"net/http"
 
 	"github.com/GustavoZeglan/Cine/internal/config"
-	psql "github.com/GustavoZeglan/Cine/internal/infra/db/postgres"
+	"github.com/GustavoZeglan/Cine/internal/domain/entities"
+	"github.com/GustavoZeglan/Cine/internal/infrastructure/db/postgres"
 	"github.com/GustavoZeglan/Cine/internal/services"
 	adapter "github.com/GustavoZeglan/Cine/pkg/adapter/handler"
 )
@@ -14,40 +15,22 @@ import (
 func main() {
 
 	config.LoadConfig()
-	oracle.Connect()
+	db := postgres.Connect()
 
-	// sql, _ := db.DB()
-	// driver := sql.Driver()
-
-	// m, _ := migrate.NewWithDatabaseInstance(
-	// 	"file://internal/infra/db/migrations",
-	// 	"godror", &database.Driver,
-	// )
-
-	// fmt.Println(m)
-
-	// if err := m.Down(); err != nil && err != migrate.ErrNoChange {
-	// 	log.Fatal(err)
-	// }
-
-	// log.Println("Migrations ran successfully.")
-
-	// db.AutoMigrate(
-	// 	&entities.Movie{},
-	// 	&entities.Room{},
-	// 	&entities.Seat{},
-	// 	&entities.Session{},
-	// 	&entities.Reservation{},
-	// )
-
-	// ctx := context.Background()
+	db.AutoMigrate(
+		&entities.Movie{},
+		&entities.Room{},
+		&entities.Seat{},
+		&entities.Session{},
+		&entities.Reservation{},
+	)
 
 	// Repositories
-	movieRepository := oracle.NewMovieRepository()
-	roomRepository := oracle.NewRoomRepository()
-	seatRepository := oracle.NewSeatRepository()
-	sessionRepository := oracle.NewSessionRepository()
-	reservationRepository := oracle.NewReservationRepository()
+	movieRepository := postgres.NewMovieRepository(db)
+	roomRepository := postgres.NewRoomRepository(db)
+	seatRepository := postgres.NewSeatRepository(db)
+	sessionRepository := postgres.NewSessionRepository(db)
+	reservationRepository := postgres.NewReservationRepository(db)
 
 	// Services
 	movieService := services.NewMovieService(movieRepository)
@@ -57,7 +40,7 @@ func main() {
 	_ = services.NewReservationService(reservationRepository)
 
 	// Start the server
-	router := adapter.NewMuxAdapter()
+	router := adapter.NewGinAdapter()
 	router.Get("/movies", func(w http.ResponseWriter, r *http.Request) {
 		movies, err := movieService.GetAllMovies(r.Context())
 		if err != nil {
