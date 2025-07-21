@@ -1,11 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/GustavoZeglan/Cine/internal/config"
-	"github.com/GustavoZeglan/Cine/internal/domain/services"
 	psql "github.com/GustavoZeglan/Cine/internal/infra/db/postgres"
+	"github.com/GustavoZeglan/Cine/internal/services"
+	adapter "github.com/GustavoZeglan/Cine/pkg/adapter/handler"
 )
 
 func main() {
@@ -33,10 +36,24 @@ func main() {
 	reservationRepository := psql.NewReservationRepository(DB)
 
 	// Services
-	_ = services.NewMovieService(movieRepository)
+	movieService := services.NewMovieService(movieRepository)
 	_ = services.NewRoomService(roomRepository)
 	_ = services.NewSeatService(seatRepository)
 	_ = services.NewSessionService(sessionRepository)
 	_ = services.NewReservationService(reservationRepository)
 
+	// Start the server
+	router := adapter.NewMuxAdapter()
+	router.Get("/movies", func(w http.ResponseWriter, r *http.Request) {
+		movies, err := movieService.GetAllMovies(r.Context())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(movies)
+	})
+	err := http.ListenAndServe(":8080", router.Router)
+	if err != nil {
+		fmt.Println("Error starting server:", err)
+	}
 }
