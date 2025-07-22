@@ -1,15 +1,16 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/GustavoZeglan/Cine/internal/config"
+	"github.com/GustavoZeglan/Cine/config"
 	"github.com/GustavoZeglan/Cine/internal/domain/entities"
+	"github.com/GustavoZeglan/Cine/internal/handlers"
 	"github.com/GustavoZeglan/Cine/internal/infrastructure/db/postgres"
-	"github.com/GustavoZeglan/Cine/internal/services"
+	"github.com/GustavoZeglan/Cine/internal/usecase"
 	adapter "github.com/GustavoZeglan/Cine/pkg/adapter/handler"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -27,29 +28,23 @@ func main() {
 
 	// Repositories
 	movieRepository := postgres.NewMovieRepository(db)
-	roomRepository := postgres.NewRoomRepository(db)
-	seatRepository := postgres.NewSeatRepository(db)
-	sessionRepository := postgres.NewSessionRepository(db)
-	reservationRepository := postgres.NewReservationRepository(db)
+	_ = postgres.NewRoomRepository(db)
+	_ = postgres.NewSeatRepository(db)
+	_ = postgres.NewSessionRepository(db)
+	_ = postgres.NewReservationRepository(db)
 
-	// Services
-	movieService := services.NewMovieService(movieRepository)
-	_ = services.NewRoomService(roomRepository)
-	_ = services.NewSeatService(seatRepository)
-	_ = services.NewSessionService(sessionRepository)
-	_ = services.NewReservationService(reservationRepository)
+	// UseCase
+	getMovies := usecase.NewGetMovies(movieRepository)
+	createMovie := usecase.NewCreateMovie(movieRepository)
+
+	// Handler
+	movieHandler := handlers.NewMovieHandler(getMovies, createMovie)
 
 	// Start the server
-	router := adapter.NewGinAdapter()
-	router.Get("/movies", func(w http.ResponseWriter, r *http.Request) {
-		movies, err := movieService.GetAllMovies(r.Context())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(movies)
-	})
-	err := http.ListenAndServe(":8080", router.Router)
+	router := gin.Default()
+	router.POST("/movies", adapter.Handler(movieHandler.Create))
+	router.GET("/movies", adapter.Handler(movieHandler.GetAll))
+	err := http.ListenAndServe(":8080", router)
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}

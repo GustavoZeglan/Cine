@@ -6,7 +6,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/GustavoZeglan/Cine/internal/config"
+	"github.com/GustavoZeglan/Cine/config"
 	oracleGorm "github.com/godoes/gorm-oracle"
 	"gorm.io/gorm"
 )

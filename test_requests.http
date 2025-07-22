@@ -1,0 +1,9 @@
+### Criar filme
+POST http://localhost:8080/movies
+Content-Type: application/json
+{
+  "title": "The Godfather"
+}
+
+### Listar filmes
+GET http://localhost:8080/movies

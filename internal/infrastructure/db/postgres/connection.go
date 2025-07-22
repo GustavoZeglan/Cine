@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	config "github.com/GustavoZeglan/Cine/internal/config"
+	config "github.com/GustavoZeglan/Cine/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
