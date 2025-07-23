@@ -7,7 +7,7 @@ import (
 	"github.com/GustavoZeglan/Cine/config"
 	"github.com/GustavoZeglan/Cine/internal/domain/entities"
 	"github.com/GustavoZeglan/Cine/internal/handlers"
-	"github.com/GustavoZeglan/Cine/internal/infrastructure/db/postgres"
+	postgres "github.com/GustavoZeglan/Cine/internal/infrastructure/db/repositoryImpl"
 	"github.com/GustavoZeglan/Cine/internal/usecase"
 	adapter "github.com/GustavoZeglan/Cine/pkg/adapter/handler"
 	"github.com/gin-gonic/gin"

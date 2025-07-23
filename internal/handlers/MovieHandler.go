@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
+	"github.com/GustavoZeglan/Cine/internal/dto"
 	"github.com/GustavoZeglan/Cine/internal/usecase"
-	"github.com/GustavoZeglan/Cine/pkg/contracts"
+	adapter "github.com/GustavoZeglan/Cine/pkg/adapter/handler"
+	"github.com/GustavoZeglan/Cine/pkg/helper"
 )
 
 type MovieHandler struct {
@@ -14,8 +17,8 @@ type MovieHandler struct {
 }
 
 type IMovieHandler interface {
-	GetAll(ctx *contracts.HttpContext)
-	Create(ctx *contracts.HttpContext)
+	GetAll(ctx *adapter.HttpContext) error
+	Create(ctx *adapter.HttpContext) error
 }
 
 func NewMovieHandler(getMovies *usecase.GetMovies, createMovie *usecase.CreateMovie) *MovieHandler {
@@ -23,32 +26,30 @@ func NewMovieHandler(getMovies *usecase.GetMovies, createMovie *usecase.CreateMo
 }
 
 var _ IMovieHandler = (*MovieHandler)(nil)
+var ve helper.ValidationError
 
-func (mh *MovieHandler) GetAll(ctx *contracts.HttpContext) {
+func (mh *MovieHandler) GetAll(ctx *adapter.HttpContext) error {
 	movies, err := mh.GetMovies.Execute(ctx.Context)
 	if err != nil {
-		ctx.Writer.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(ctx.Writer).Encode("Failed to fetch movies")
+		return err
 	}
-	ctx.Writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(ctx.Writer).Encode(movies)
+	return helper.WriteJSON(ctx.Writer, http.StatusOK, movies)
 }
 
-func (mh *MovieHandler) Create(ctx *contracts.HttpContext) {
-	var input struct {
-		Title string `json:"title"`
-	}
+func (mh *MovieHandler) Create(ctx *adapter.HttpContext) error {
+	var input dto.CreateMovieInput
 	if err := json.NewDecoder(ctx.Request.Body).Decode(&input); err != nil {
-		ctx.Writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(ctx.Writer).Encode("Failed to parse json")
-		return
+		return helper.InvalidJSON()
 	}
+	if err := input.Validate(); err != nil {
+		if errors.As(err, &ve) {
+			return helper.WriteJSON(ctx.Writer, http.StatusBadRequest, ve.Errors)
+		}
+	}
+	defer ctx.Request.Body.Close()
 	output, err := mh.CreateMovie.Execute(ctx.Request.Context(), input)
 	if err != nil {
-		ctx.Writer.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(ctx.Writer).Encode("Failed to create movie")
-		return
+		return err
 	}
-	ctx.Writer.WriteHeader(http.StatusCreated)
-	json.NewEncoder(ctx.Writer).Encode(output)
+	return helper.WriteJSON(ctx.Writer, http.StatusCreated, output)
 }

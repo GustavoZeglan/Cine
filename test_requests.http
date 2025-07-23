@@ -1,9 +1,5 @@
-### Criar filme
-POST http://localhost:8080/movies
-Content-Type: application/json
-{
-  "title": "The Godfather"
-}
+### Criar filme POST
+curl -X POST http://localhost:8080/movies -H "Content-Type: application/json" -d '{"title":"The Shawshank Redemption"}'
 
-### Listar filmes
-GET http://localhost:8080/movies
+### Listar filmes GET 
+curl http://localhost:8080/movies
